@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--
+        properties标签可以配置键值对
+            这里的键值对可以供数据库环境使用.
+
+        resource属性用来加载外部的jdbc.properties属性信息
+    -->
+    <properties resource="jdbc.properties">
+        <property name="username" value="root"/>
+        <property name="password" value="99525092"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/mybatis"/>
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+    </properties>
+
+      <settings>
+          <!--开启自动驼峰命名-->
+          <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <!--配置别名-->
+    <typeAliases>
+        <!--typeAlias配置一个别名
+                type是你的具体类型的全类名
+                alias 是别名
+                <typeAlias type="com.atguigu.pojo.User" alias="user" />
+        -->
+        <!-- 通过配置包名的方式配置所有JavaBean的别名
+                别名到底是啥,怎么用
+
+             默认别名,就是类名,但一般用类名首字母小写居多
+         -->
+        <package name="com.atguigu.pojo"/>
+    </typeAliases>
+
+    <!-- environments是配置数据库连接属性( 多个 ) -->
+    <environments default="development">
+        <!--
+            environment是一个数据库环境
+                id属性给环境标识一个唯一的标识
+        -->
+        <environment id="development">
+            <!--
+                transactionManager 表示配置事务管理器
+                    type属性设置哪种事务管理器
+            -->
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <!--修改数据库的连接属性-->
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.user}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--
+        配置支持多数据库
+    -->
+    <databaseIdProvider type="DB_VENDOR">
+        <!--
+            property 给数据库配置一个标识
+                name指的数据库
+                value是数据库的标识
+        -->
+        <property name="SQL Server" value="sqlserver" />
+        <property name="MySQL" value="mysql" />
+        <property name="DB2" value="db2" />
+        <property name="Oracle" value="oracle" />
+    </databaseIdProvider>
+
+    <!--
+        我们说,mybatis是把sql语句配置到xml配置文件中
+        告诉mbyatis到哪里去加载sql语句的配置文件
+    -->
+    <mappers>
+        <!--说,去加载UserMapper.xml配置文件 -->
+        <!--
+            是指从ClassPath类路径下开始搜索配置文件
+        <mapper resource="com/atguigu/mapper/UserMapper.xml"/> -->
+
+        <!--
+            mapper表示配置搜索sql的配置文件
+                class 表示搜索指定接口对应的配置文件
+
+            注意事项:
+                1 Mapper接口和Mapper.xml配置文件,必须在同一个包下
+                2 Mapper接口文件名和Mapper.xml文件名要一致
+           <mapper class="com.atguigu.mapper.UserMapper" />
+        -->
+
+        <!--配置按照指定的包名去搜索所有Mapper.xml配置文件-->
+        <package name="com.atguigu.mapper"/>
+
+    </mappers>
+
+</configuration>

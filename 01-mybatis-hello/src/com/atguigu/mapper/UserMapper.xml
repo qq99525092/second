@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    要修改mapper和namespace名称空间属性值
+        它的属性值必须是Mapper接口的全类名
+-->
+<mapper namespace="com.atguigu.mapper.UserMapper">
+    <!--
+        public User queryUserById(Integer id);
+        select标签表示配置一个select查询语句
+            id 属性值必须是方法名
+            parameterType 属性配置方法的参数类型       int 表示 java.lang.Integer类型
+            resultType  属性设置方法的返回值类型
+
+        在mybatis中占位符要写成为: #{}
+    -->
+    <select id="queryUserById" resultType="com.atguigu.pojo.User">
+        select `id`,`last_name` lastName, `sex` from t_user where id = #{id}
+    </select>
+
+
+<!--    public List<User> queryUsers();
+        resultType 属性设置查询回来的结果每一笔转换成为什么具体的类型
+
+     而不带有 databaseId 属性的它可以用于执行任何数据库
+-->
+    <select id="queryUsers" resultType="user">
+        select `id`,`last_name` lastName, `sex` from t_user
+    </select>
+    <!--
+        带有 databaseId 属性的是只是匹配了当前数据库就会执行的sql
+    -->
+    <select id="queryUsers" resultType="user" databaseId="oracle">
+        select `id`,`last_name` lastName, `sex` from t_user where 1 = 1
+    </select>
+
+
+
+<!--    /**
+    * 1 将查询回来每一行记录都封装为USer对象. <br>
+    * 2 按照指定的列做为key保存查询到的数据,封装为Map <br/>
+    * @return
+    */
+    @MapKey("id")
+    public Map<Integer,User>queryUserForMap();-->
+    <select id="queryUserForMap" resultType="com.atguigu.pojo.User">
+        select `id`,`last_name`, `sex` from t_user
+    </select>
+
+<!--    public int saveUser(User user);
+        insert语句配insert标签
+        update语句配update标签
+        delete语句配delete标签
+        select语句配select标签
+
+        useGeneratedKeys="true" 使用数据库生成的主键值
+        keyProperty="id"        将返回的主键值,注入到哪个属性中
+        useGeneratedKeys="true" keyProperty="id"
+-->
+    <insert id="saveUser" parameterType="com.atguigu.pojo.User">
+        <!--
+            selectKey标签可以配置一个查询语句
+                order设置selectkey中的查询语句的执行顺序
+                    AFTER   后执行
+                    Before  先执行
+                keyProperty="id"        将返回的主键值,注入到哪个属性中
+                resultType="int"        表示返回的数据是什么类型
+         -->
+        <selectKey order="AFTER" keyProperty="id" resultType="int">
+            select last_insert_id()
+        </selectKey>
+        insert into t_user( `last_name`,`sex` ) values(#{lastName},#{sex})
+    </insert>
+
+<!--    public int deleteUserById(Integer id);-->
+    <delete id="deleteUserById" >
+        delete from t_user where id = #{id}
+    </delete>
+
+<!--    public int updateUserById(User user);-->
+    <update id="updateUserById" parameterType="com.atguigu.pojo.User">
+        update
+            t_user
+        set
+            `last_name` = #{lastName} ,
+            `sex` = #{sex}
+        where
+            id = #{id}
+    </update>
+
+
+
+</mapper>
